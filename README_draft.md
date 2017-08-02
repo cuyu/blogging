@@ -52,3 +52,25 @@ All you need to do is open your terminal and execute (not ready yet~):
 pip install blogging
 ```
 
+### Settings
+
+For the first time you use the tool, you **must** set the blog project root path by:
+
+```
+blogging set-project-path {YOUR_PROJECT_PATH}
+```
+
+*Or you can manaully create and edit the `~/.blogging` file.*
+
+### Compatibility
+
+For now, only support the following shell:
+
+- zsh
+
+### TODO
+
+- Support more shell types
+- More flexible blog project structure (e.g. can customise the draft/publish folder name)
+- An option to open and edit published blogs, also support add `-filter` option to filter by word, category, tags, etc.
+
