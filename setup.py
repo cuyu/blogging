@@ -7,7 +7,7 @@ import os
 
 
 def enable_argcomplete():
-    with open(os.path.join(os.path.expanduser("~"), '.zshrc'), 'w') as f:
+    with open(os.path.join(os.path.expanduser("~"), '.zshrc'), 'a') as f:
         f.write('eval "$(register-python-argcomplete blogging)"\n')
 
 

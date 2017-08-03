@@ -73,4 +73,5 @@ For now, only support the following shell:
 - Support more shell types
 - More flexible blog project structure (e.g. can customise the draft/publish folder name)
 - An option to open and edit published blogs, also support add `-filter` option to filter by word, category, tags, etc.
+- Add a gif screenshot to show this tool
 
