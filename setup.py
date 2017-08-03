@@ -8,7 +8,7 @@ import os
 
 def enable_argcomplete():
     with open(os.path.join(os.path.expanduser("~"), '.zshrc'), 'a') as f:
-        f.write('eval "$(register-python-argcomplete blogging)"\n')
+        f.write('\neval "$(register-python-argcomplete blogging)"\n')
 
 
 class CustomInstallCommand(install):
