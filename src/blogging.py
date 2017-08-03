@@ -149,13 +149,13 @@ def main():
     publish_parser = subparsers.add_parser('publish', help='Publish the post to the Github')
     publish_parser.add_argument('draft_file', help='File name of the draft').completer = FileCompleter('_drafts')
 
-    argcomplete.autocomplete(parser)
+    argcomplete.autocomplete(parser, always_complete_options=False)
     args = parser.parse_args()
 
     if args.command == 'new':
         post_name = args.post_title
         post_words = post_name.split(' ')
-        post_tags = '[' + ', '.join(args.tags.split(',')) + ']'
+        post_tags = '[' + ', '.join(args.tags) + ']'
         today = datetime.date.today()
         file_name = str(today)
         for word in post_words:

@@ -49,7 +49,7 @@ blogging publish {file_name}
 All you need to do is open your terminal and execute (not ready yet~):
 
 ```
-pip install blogging
+pip install github-blogging
 ```
 
 ### Settings

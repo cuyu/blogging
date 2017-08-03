@@ -7,7 +7,7 @@ import os
 
 
 def enable_argcomplete():
-    with open(os.path.join(os.path.expanduser("~")), '.zshrc') as f:
+    with open(os.path.join(os.path.expanduser("~"), '.zshrc'), 'w') as f:
         f.write('eval "$(register-python-argcomplete blogging)"\n')
 
 
@@ -20,7 +20,7 @@ class CustomInstallCommand(install):
 
 
 setuptools.setup(
-    name='blogging',
+    name='github-blogging',
     version=__VERSION__,
     description='A cmdline tool to help managing your blogs',
     packages=['src'],
@@ -36,6 +36,10 @@ setuptools.setup(
             "blogging = src.blogging:main",
         ],
     },
+    license='MIT',
+    classifiers=[
+        'Programming Language :: Python :: 2'
+    ],
     cmdclass={
         'install': CustomInstallCommand,
     },
