@@ -54,6 +54,8 @@ All you need to do is open your terminal and execute:
 pip install github-blogging
 ```
 
+**To enable the auto-complete (press `tab`) feature, you need to open a new shell session after installation.*
+
 ### Settings
 
 For the first time you use the tool, you **must** set the blog project root path by:
@@ -75,5 +77,5 @@ For now, only support the following shell:
 - Support more shell types
 - More flexible blog project structure (e.g. can customise the draft/publish folder name)
 - An option to open and edit published blogs, also support add `-filter` option to filter by word, category, tags, etc.
-- Add a gif screenshot to show this tool
+- ~~Add a gif screenshot to show this tool~~
 
