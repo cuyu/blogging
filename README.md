@@ -2,6 +2,8 @@
 
 > A smart tool to help you writing blogs
 
+![screencast](/screencast.gif)
+
 This cmdline tool was initially created to help managing [my own blog](http://cuyu.github.io) and it really saves my time. So I'd like to abstract the tool (suit for more scenario) here to benefit you!
 
 ### How this tool can help you
@@ -46,7 +48,7 @@ blogging publish {file_name}
 
 **Super easy, right?**
 
-All you need to do is open your terminal and execute (not ready yet~):
+All you need to do is open your terminal and execute:
 
 ```
 pip install github-blogging

@@ -172,7 +172,7 @@ date: {date}
         draft_path = os.path.join(SETTINGS.PROJECT_PATH, '_drafts', '{0}'.format(file_name))
         with open(draft_path, 'w') as f:
             f.write(content)
-        print "\"{0}\" has been created under _posts folder.".format(file_name)
+        print "\"{0}\" has been created under _drafts folder.".format(file_name)
         call(['open', draft_path])
     elif args.command == 'ls':
         if args.list_content == 'categories':
