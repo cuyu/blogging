@@ -20,7 +20,8 @@ class Settings(object):
         if os.path.isfile(setting_path):
             with open(setting_path, 'r') as f:
                 for line in f:
-                    self.PROJECT_PATH = line
+                    k, v = line.split('=')
+                    setattr(self, k.upper(), v.strip())
 
     def __getattribute__(self, item):
         if item == 'PROJECT_PATH':
@@ -205,7 +206,7 @@ date: {date}
         call(['git', 'push'])
     elif args.command == 'set-project-path':
         with open(BLOGGING_SETTINGS_FILE, 'w') as f:
-            f.write(args.project_path)
+            f.write('project_path={0}\n'.format(args.project_path))
     elif args.command == 'continue':
         draft_path = os.path.join(SETTINGS.PROJECT_PATH, '_drafts', args.draft_file)
         call(['open', draft_path])
