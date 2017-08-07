@@ -23,7 +23,7 @@ setuptools.setup(
     name='github-blogging',
     version=__VERSION__,
     description='A cmdline tool to help managing your blogs',
-    packages=['src'],
+    packages=['blogging'],
     author='Curtis Yu',
     author_email='icyarm@icloud.com',
     install_requires=[
@@ -33,7 +33,7 @@ setuptools.setup(
     url='https://github.com/cuyu/blogging',
     entry_points={
         "console_scripts": [
-            "blogging = src.blogging:main",
+            "blogging = blogging.blogging:main",
         ],
     },
     license='MIT',
