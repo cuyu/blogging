@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import setuptools
-from src import __VERSION__
+from blogging import __VERSION__
 from setuptools.command.install import install
 import os
 
