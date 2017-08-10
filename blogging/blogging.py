@@ -196,6 +196,10 @@ date: {date}
                     in_file.write(line)
         call(['git', 'add', post_path])
         call(['git', 'rm', '-f', draft_path])
+        # If the draft has not been saved to github, the above cmd will do nothing
+        # So here we check if the draft is still exist and remove if exist
+        if os.path.isfile(draft_path):
+            os.remove(draft_path)
         call(['git', 'commit', '-m', 'Publish post: {0}'.format(args.draft_file)])
         call(['git', 'push'])
     elif args.command == 'save':
