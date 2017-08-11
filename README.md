@@ -1,6 +1,6 @@
 ## 🖊blogging
 
-> A smart tool to help you writing blogs
+> A smart tool to help you managing blogs
 
 ![screencast](/screencast.gif)
 
@@ -55,6 +55,26 @@ pip install github-blogging
 ```
 
 **To enable the auto-complete (press `tab`) feature, you need to open a new shell session after installation.*
+
+### File structures
+
+This tool assume you have the following file structures for the blog project:
+
+```
+YOUR_PROJECT_PATH
+├── _drafts
+│   ├── first_draft.md
+│   ├── second_draft.md
+│   └── third_draft.md
+├── _posts
+│   ├── first_blog.md
+│   ├── second_blog.md
+│   └── third_blog.md
+├── index.html
+└── ...
+```
+
+All markdown files under `_posts` folder will be compiled into html files and hosted on your site. 
 
 ### Settings
 
