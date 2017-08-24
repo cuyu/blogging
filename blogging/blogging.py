@@ -10,8 +10,22 @@ from tabulate import tabulate
 from pprint import pprint
 import codecs
 import argcomplete
+from Tkinter import Tk
+import time
 
 BLOGGING_SETTINGS_FILE = os.path.join(expanduser("~"), '.blogging')
+
+
+def add_to_clipboard(text):
+    # this function seems not work for me?
+    r = Tk()
+    r.withdraw()
+    r.clipboard_clear()
+    r.clipboard_append('some string')
+    r.update()
+    time.sleep(.2)
+    r.update()
+    r.destroy()
 
 
 class Settings(object):
@@ -107,6 +121,7 @@ class FileCompleter(object):
 
 
 def CategoryCompleter(prefix, **kwargs):
+    # FIXME: there is a bug (of argcomplete) that when `blogging new '的' `, then tab is not work as expect, the reason should be the unicode in cmd
     result = _list_meta_info()
     all_categories = result['category'].keys()
     return (c for c in all_categories if c.startswith(prefix))
@@ -149,6 +164,10 @@ def main():
 
     publish_parser = subparsers.add_parser('publish', help='Publish the post to the Github')
     publish_parser.add_argument('draft_file', help='File name of the draft').completer = FileCompleter('_drafts')
+
+    image_parser = subparsers.add_parser('image', help='Rename and save the image to the Github')
+    image_parser.add_argument('image_path', help='Path of the image file')
+    image_parser.add_argument('draft_file', help='Title of the blog in draft').completer = FileCompleter('_drafts')
 
     argcomplete.autocomplete(parser, always_complete_options=False)
     args = parser.parse_args()
@@ -214,6 +233,18 @@ date: {date}
     elif args.command == 'continue':
         draft_path = os.path.join(SETTINGS.PROJECT_PATH, '_drafts', args.draft_file)
         call(['open', draft_path])
+    elif args.command == 'image':
+        image_extension = args.image_path.split('.')[-1]
+        image_name = args.draft_file.replace('.md', '') + '.' + image_extension
+        index = 1
+        while os.path.isfile(os.path.join(SETTINGS.PROJECT_PATH, 'images', image_name)):
+            image_name = args.draft_file.replace('.md', '') + '-{0}'.format(index) + '.' + image_extension
+            index += 1
+        call(['mv', args.image_path, os.path.join(SETTINGS.PROJECT_PATH, 'images', image_name)])
+        os.chdir(SETTINGS.PROJECT_PATH)
+        call(['git', 'add', os.path.join(SETTINGS.PROJECT_PATH, 'images', image_name)])
+        print '/images/{0}'.format(image_name)
+        # TODO: add image path to clipboard
 
 
 if __name__ == '__main__':
