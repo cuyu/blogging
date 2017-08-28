@@ -179,8 +179,10 @@ def main():
         today = datetime.date.today()
         file_name = str(today)
         for word in post_words:
-            file_name += '-' + word
+            if word not in ['<', '>']:
+                file_name += '-' + word
         file_name += '.md'
+        post_name = post_name.replace('<', '&lt;').replace('>', '&gt;')
         content = """---
 layout: post
 title: "{title}"
