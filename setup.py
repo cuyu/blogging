@@ -28,7 +28,8 @@ setuptools.setup(
     author_email='icyarm@icloud.com',
     install_requires=[
         'argcomplete',
-        'tabulate'
+        'tabulate',
+        'termcolor',
     ],
     url='https://github.com/cuyu/blogging',
     entry_points={

@@ -7,14 +7,14 @@ import datetime
 import re
 from subprocess import call
 from os.path import expanduser
-from termcolor import colored
 from tabulate import tabulate
-from pprint import pprint
 import codecs
 import argcomplete
 from Tkinter import Tk
 import time
+from termcolor import colored
 
+__VERSION__ = '0.1.5'
 BLOGGING_SETTINGS_FILE = os.path.join(expanduser("~"), '.blogging')
 
 
@@ -164,7 +164,8 @@ def TagCompleter(prefix, **kwargs):
 #################################################################
 def main():
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
-                                     description='A simple tool to create new blogging file.\n' +
+                                     description=colored('blogging ({0})\n'.format(__VERSION__), 'cyan') +
+                                                 'A simple tool to create new blogging file.\n' +
                                                  'Use example: ./blogging new "post_title" category tag1 tag2\n')
     subparsers = parser.add_subparsers(help='Use {subcommand} -h for each subcommand\'s optional arguments details',
                                        dest='command')
