@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import argparse
+import cgi
 import os
 import datetime
+import re
 from subprocess import call
 from os.path import expanduser
 from termcolor import colored
@@ -26,6 +28,27 @@ def add_to_clipboard(text):
     time.sleep(.2)
     r.update()
     r.destroy()
+
+
+def get_valid_filename(s):
+    """
+    Return the given string converted to a string that can be used for a clean
+    filename. Remove leading and trailing spaces; convert other spaces to
+    underscores; and remove anything that is not an alphanumeric, dash,
+    underscore, or dot.
+    >>> get_valid_filename("john's portrait in 2004.jpg")
+    'johns_portrait_in_2004.jpg'
+    """
+    s = str(s).strip().replace(' ', '-')
+    return re.sub(r'(?u)[^-\w.]', '', s)
+
+
+def get_valid_title(s):
+    """
+    Escape characters when used as html parsing.
+    E.g. `<` to `&lt;`
+    """
+    return cgi.escape(s)
 
 
 class Settings(object):
@@ -174,14 +197,10 @@ def main():
 
     if args.command == 'new':
         post_name = args.post_title
-        post_words = post_name.split(' ')
         post_tags = '[' + ', '.join(args.tags) + ']'
         today = datetime.date.today()
-        file_name = str(today)
-        for word in post_words:
-            file_name += '-' + word.replace('<', '').replace('>', '')
-        file_name += '.md'
-        post_name = post_name.replace('<', '&lt;').replace('>', '&gt;')
+        file_name = str(today) + '-' + get_valid_filename(post_name) + '.md'
+        post_name = get_valid_title(post_name)
         content = """---
 layout: post
 title: "{title}"
