@@ -91,7 +91,7 @@ def _get_meta_info(path='_posts'):
                         tag_list = line[5:].strip()[1:-1].split(',')
                         tag_list = [tag.strip() for tag in tag_list]
                         info[file_name]['tag'] = tag_list
-                    if line == '---\n':
+                    if line.startswith('---'):
                         break
     return info
 
@@ -226,7 +226,8 @@ def main():
     save_parser = subparsers.add_parser('save', help='Save all the drafts and changes of edited posts to the Github')
 
     continue_parser = subparsers.add_parser('continue', help='Open one draft and continue the writing')
-    continue_parser.add_argument('draft_file', help='File name of the draft').completer = FileCompleter('_drafts')
+    continue_parser.add_argument('--filter', action='store', nargs=1, help='Filter posts by keywords in title/tag/category')
+    continue_parser.add_argument('draft_file', help='File name of the draft').completer = FileCompleterWithFilter('_drafts')
 
     publish_parser = subparsers.add_parser('publish', help='Publish the post to the Github')
     publish_parser.add_argument('draft_file', help='File name of the draft').completer = FileCompleter('_drafts')
