@@ -40,7 +40,7 @@ def get_valid_filename(s):
     'johns_portrait_in_2004.jpg'
     """
     s = str(s).strip().replace(' ', '-')
-    return re.sub(r'(?u)[^-\w.]', '', s)
+    return re.sub(r"[\~\#\%\&\*\{\}\\\:\<\>\?\/\+\|]", '', s)
 
 
 def get_valid_title(s):
