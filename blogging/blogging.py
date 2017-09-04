@@ -177,10 +177,12 @@ class FileCompleterWithFilter(FileCompleter):
 
     def filter_by_keyword(self, keyword):
         results = []
+        keyword_lower = keyword.lower()
         for filename in self.info:
             meta_data = self.info[filename]
-            if keyword == meta_data.get('category') or keyword in meta_data['title'] or (
-                meta_data.get('tag') and keyword in meta_data.get('tag')):
+            if (meta_data.get('category') and keyword_lower == meta_data.get('category').lower()) \
+                    or keyword_lower in meta_data['title'].lower() \
+                    or (meta_data.get('tag') and keyword_lower in [tag.lower() for tag in meta_data.get('tag')]):
                 results.append(filename.decode('utf-8'))
         return results
 
@@ -226,8 +228,10 @@ def main():
     save_parser = subparsers.add_parser('save', help='Save all the drafts and changes of edited posts to the Github')
 
     continue_parser = subparsers.add_parser('continue', help='Open one draft and continue the writing')
-    continue_parser.add_argument('--filter', action='store', nargs=1, help='Filter posts by keywords in title/tag/category')
-    continue_parser.add_argument('draft_file', help='File name of the draft').completer = FileCompleterWithFilter('_drafts')
+    continue_parser.add_argument('--filter', action='store', nargs=1,
+                                 help='Filter posts by keywords in title/tag/category')
+    continue_parser.add_argument('draft_file', help='File name of the draft').completer = FileCompleterWithFilter(
+        '_drafts')
 
     publish_parser = subparsers.add_parser('publish', help='Publish the post to the Github')
     publish_parser.add_argument('draft_file', help='File name of the draft').completer = FileCompleter('_drafts')
