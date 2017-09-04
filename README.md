@@ -46,6 +46,18 @@ With `blogging`:
 blogging publish {file_name}
 ```
 
+#### Scenario 5
+
+The blog is published and you'd like to edit the published blog again. However you cannot remeber the exact title of the blog. 
+
+With `blogging`, you can open the published blog conveniently with `--filter` option. This option will search the title/category/tags of all published  blogs, and pop up (need to press `space` and  `tab`  after the keyword) candidate blogs in the terminal.
+
+```
+blogging edit --filter {keyword} {file_name}
+```
+
+The `--filter` is optional and is case insensesitve (i.e. 'Abc' works the same as 'abc').
+
 **Super easy, right?**
 
 All you need to do is open your terminal and execute:
