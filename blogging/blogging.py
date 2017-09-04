@@ -70,6 +70,32 @@ class Settings(object):
 SETTINGS = Settings(BLOGGING_SETTINGS_FILE)
 
 
+def _get_meta_info(path='_posts'):
+    info = dict()
+    for file_name in os.listdir(os.path.join(SETTINGS.PROJECT_PATH, path)):
+        if file_name.startswith('.'):
+            continue
+        info[file_name] = dict()
+        with codecs.open(os.path.join(SETTINGS.PROJECT_PATH, path, file_name), 'r', encoding='utf-8') as f:
+            first_line = f.readline()
+            if first_line.startswith('---'):
+                while True:
+                    line = f.readline()
+                    if line.startswith('title:'):
+                        title = line[6:].strip()
+                        info[file_name]['title'] = title
+                    elif line.startswith('category:'):
+                        category = line[9:].strip()
+                        info[file_name]['category'] = category
+                    elif line.startswith('tags:'):
+                        tag_list = line[5:].strip()[1:-1].split(',')
+                        tag_list = [tag.strip() for tag in tag_list]
+                        info[file_name]['tag'] = tag_list
+                    if line == '---\n':
+                        break
+    return info
+
+
 def _list_meta_info(path='_posts'):
     result = dict()
     categories = dict()
@@ -78,31 +104,24 @@ def _list_meta_info(path='_posts'):
     result['category'] = categories
     result['tag'] = tags
     result['title'] = titles
-    for file_name in os.listdir(os.path.join(SETTINGS.PROJECT_PATH, path)):
-        with codecs.open(os.path.join(SETTINGS.PROJECT_PATH, path, file_name), 'r', encoding='utf-8') as f:
-            first_line = f.readline()
-            if first_line.startswith('---'):
-                while True:
-                    line = f.readline()
-                    if line.startswith('title:'):
-                        title = line[6:].strip()
-                        titles[title] = file_name
-                    elif line.startswith('category:'):
-                        category = line[9:].strip()
-                        if category in categories:
-                            categories[category] += 1
-                        else:
-                            categories[category] = 1
-                    elif line.startswith('tags:'):
-                        tag_list = line[5:].strip()[1:-1].split(',')
-                        for tag in tag_list:
-                            tag = tag.strip()
-                            if tag in tags:
-                                tags[tag] += 1
-                            else:
-                                tags[tag] = 1
-                    if line == '---\n':
-                        break
+    info = _get_meta_info(path)
+    for file_name in info:
+        category = info[file_name].get('category')
+        tag_list = info[file_name].get('tag')
+        title = info[file_name]['title']
+        if category:
+            if category in categories:
+                categories[category] += 1
+            else:
+                categories[category] = 1
+        if tag_list:
+            for tag in tag_list:
+                tag = tag.strip()
+                if tag in tags:
+                    tags[tag] += 1
+                else:
+                    tags[tag] = 1
+        titles[title] = file_name
     return result
 
 
@@ -139,8 +158,31 @@ class FileCompleter(object):
                 file_names = []
         self.choices = [name.decode('utf-8') for name in file_names if not name.startswith('.')]
 
-    def __call__(self, prefix, **kwargs):
+    def __call__(self, prefix, parsed_args, **kwargs):
         return (c for c in self.choices if c.startswith(prefix))
+
+
+class FileCompleterWithFilter(FileCompleter):
+    def __init__(self, path):
+        super(FileCompleterWithFilter, self).__init__(path)
+        self.info = _get_meta_info(path)
+
+    def __call__(self, prefix, parsed_args, **kwargs):
+        if parsed_args.filter:
+            keyword = parsed_args.filter[0]
+            results = self.filter_by_keyword(keyword)
+        else:
+            results = self.choices
+        return (c for c in results if c.startswith(prefix))
+
+    def filter_by_keyword(self, keyword):
+        results = []
+        for filename in self.info:
+            meta_data = self.info[filename]
+            if keyword == meta_data.get('category') or keyword in meta_data['title'] or (
+                meta_data.get('tag') and keyword in meta_data.get('tag')):
+                results.append(filename.decode('utf-8'))
+        return results
 
 
 def CategoryCompleter(prefix, **kwargs):
@@ -181,7 +223,7 @@ def main():
     ls_parser = subparsers.add_parser('ls', help='List exist stats')
     ls_parser.add_argument('list_content', choices=['categories', 'tags'])
 
-    save_parser = subparsers.add_parser('save', help='Save all the drafts to the Github')
+    save_parser = subparsers.add_parser('save', help='Save all the drafts and changes of edited posts to the Github')
 
     continue_parser = subparsers.add_parser('continue', help='Open one draft and continue the writing')
     continue_parser.add_argument('draft_file', help='File name of the draft').completer = FileCompleter('_drafts')
@@ -192,6 +234,10 @@ def main():
     image_parser = subparsers.add_parser('image', help='Rename and save the image to the Github')
     image_parser.add_argument('image_path', help='Path of the image file')
     image_parser.add_argument('draft_file', help='Title of the blog in draft').completer = FileCompleter('_drafts')
+
+    edit_parser = subparsers.add_parser('edit', help='Open one published post and edit')
+    edit_parser.add_argument('--filter', action='store', nargs=1, help='Filter posts by keywords in title/tag/category')
+    edit_parser.add_argument('post_file', help='File name of the post').completer = FileCompleterWithFilter('_posts')
 
     argcomplete.autocomplete(parser, always_complete_options=False)
     args = parser.parse_args()
@@ -245,8 +291,10 @@ date: {date}
     elif args.command == 'save':
         os.chdir(SETTINGS.PROJECT_PATH)
         all_drafts = os.path.join(SETTINGS.PROJECT_PATH, '_drafts', '*')
+        all_posts = os.path.join(SETTINGS.PROJECT_PATH, '_posts', '*')
         call(['git', 'add', all_drafts])
-        call(['git', 'commit', '-m', 'Save drafts'])
+        call(['git', 'add', all_posts])
+        call(['git', 'commit', '-m', 'Save drafts and edited posts'])
         call(['git', 'push'])
     elif args.command == 'set-project-path':
         with open(BLOGGING_SETTINGS_FILE, 'w') as f:
@@ -266,6 +314,9 @@ date: {date}
         call(['git', 'add', os.path.join(SETTINGS.PROJECT_PATH, 'images', image_name)])
         print '/images/{0}'.format(image_name)
         # TODO: add image path to clipboard
+    elif args.command == 'edit':
+        post_path = os.path.join(SETTINGS.PROJECT_PATH, '_posts', args.post_file)
+        call(['open', post_path])
 
 
 if __name__ == '__main__':
