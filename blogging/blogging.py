@@ -319,12 +319,18 @@ def main():
         print 'Before playing the tool, there are some settings must be set'
         print colored('[1] Your blog project full path:', 'magenta')
         line = sys.stdin.readline().strip()
-        while not os.path.isdir(line):
+        retry = 3
+        while not os.path.isdir(line) and retry > 0:
             print 'Please input a valid path:'
             line = sys.stdin.readline().strip()
+            retry -= 1
 
-        with open(BLOGGING_SETTINGS_FILE, 'w') as f:
-            f.write('project_path={0}\n'.format(line))
+        if os.path.isdir(line):
+            with open(BLOGGING_SETTINGS_FILE, 'w') as f:
+                f.write('project_path={0}\n'.format(line))
+            print colored('Configration done. Enjoy the tool~', 'green')
+        else:
+            print colored('Path still not valid. Exiting...', 'red')
 
 
 if __name__ == '__main__':

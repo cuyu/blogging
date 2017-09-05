@@ -90,10 +90,10 @@ All markdown files under `_posts` folder will be compiled into html files and ho
 
 ### Settings
 
-For the first time you use the tool, you **must** set the blog project root path by:
+For the first time you use the tool, you **must** do some settings (e.g. set the blog project root path). To get settings done, just type:
 
 ```
-blogging set-project-path {YOUR_PROJECT_PATH}
+blogging
 ```
 
 *Or you can manaully create and edit the `~/.blogging` file.*
