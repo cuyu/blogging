@@ -15,8 +15,8 @@ from termcolor import colored
 from constants import __VERSION__, BLOGGING_SETTINGS_FILE
 
 
-class ConfigError(BaseException):
-    pass
+def validate_settings():
+    return True if SETTINGS.PROJECT_PATH else False
 
 
 def add_to_clipboard(text):
@@ -61,12 +61,6 @@ class Settings(object):
                 for line in f:
                     k, v = line.split('=')
                     setattr(self, k.upper(), v.strip())
-
-    def __getattribute__(self, item):
-        if item == 'PROJECT_PATH':
-            if not object.__getattribute__(self, item):
-                raise ConfigError('PROJECT_PATH not set')
-        return object.__getattribute__(self, item)
 
 
 SETTINGS = Settings(BLOGGING_SETTINGS_FILE)
@@ -318,9 +312,9 @@ date: {date}
 
 
 def main():
-    try:
+    if validate_settings():
         parse_arguments()
-    except ConfigError, e:
+    else:
         print 'This seems your first time using this tool'
         print 'Before playing the tool, there are some settings must be set'
         print colored('[1] Your blog project full path:', 'magenta')
