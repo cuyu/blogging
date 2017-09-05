@@ -9,13 +9,13 @@ from subprocess import call
 from tabulate import tabulate
 import codecs
 import argcomplete
-from Tkinter import Tk
 import time
 from termcolor import colored
 from constants import __VERSION__, BLOGGING_SETTINGS_FILE
 
 
 def add_to_clipboard(text):
+    from Tkinter import Tk
     # this function seems not work for me?
     r = Tk()
     r.withdraw()
