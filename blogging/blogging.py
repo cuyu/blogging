@@ -6,12 +6,17 @@ import os
 import datetime
 import re
 from subprocess import call
+import sys
 from tabulate import tabulate
 import codecs
 import argcomplete
 import time
 from termcolor import colored
 from constants import __VERSION__, BLOGGING_SETTINGS_FILE
+
+
+class ConfigError(BaseException):
+    pass
 
 
 def add_to_clipboard(text):
@@ -59,8 +64,8 @@ class Settings(object):
 
     def __getattribute__(self, item):
         if item == 'PROJECT_PATH':
-            assert object.__getattribute__(self,
-                                           item), 'Please set the project path firstly\n E.g. blogging set-project-path [YOUR_BLOG_PATH]'
+            if not object.__getattribute__(self, item):
+                raise ConfigError('PROJECT_PATH not set')
         return object.__getattribute__(self, item)
 
 
@@ -144,15 +149,11 @@ def stats_tags():
 
 class FileCompleter(object):
     def __init__(self, path):
-        try:
-            drafts_path = os.path.join(SETTINGS.PROJECT_PATH, path)
-        except AssertionError:
-            file_names = []
+        drafts_path = os.path.join(SETTINGS.PROJECT_PATH, path)
+        if os.path.isdir(drafts_path):
+            file_names = os.listdir(os.path.join(SETTINGS.PROJECT_PATH, path))
         else:
-            if os.path.isdir(drafts_path):
-                file_names = os.listdir(os.path.join(SETTINGS.PROJECT_PATH, path))
-            else:
-                file_names = []
+            file_names = []
         self.choices = [name.decode('utf-8') for name in file_names if not name.startswith('.')]
 
     def __call__(self, prefix, parsed_args, **kwargs):
@@ -203,15 +204,13 @@ def TagCompleter(prefix, **kwargs):
 # To register with argcompletion, run following command:        #
 #   eval "$(register-python-argcomplete blogging)"              #
 #################################################################
-def main():
+def parse_arguments():
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                      description=colored('blogging ({0})\n'.format(__VERSION__), 'cyan') +
                                                  'A simple tool to create new blogging file.\n' +
                                                  'Use example: ./blogging new "post_title" category tag1 tag2\n')
     subparsers = parser.add_subparsers(help='Use {subcommand} -h for each subcommand\'s optional arguments details',
                                        dest='command')
-    set_parser = subparsers.add_parser('set-project-path', help='Configure the project path')
-    set_parser.add_argument('project_path', help='Path of your blog project')
 
     create_parser = subparsers.add_parser('new', help='Create new blogging')
     create_parser.add_argument('post_title', help='Title of the blog')
@@ -298,9 +297,6 @@ date: {date}
         call(['git', 'add', all_posts])
         call(['git', 'commit', '-m', 'Save drafts and edited posts'])
         call(['git', 'push'])
-    elif args.command == 'set-project-path':
-        with open(BLOGGING_SETTINGS_FILE, 'w') as f:
-            f.write('project_path={0}\n'.format(args.project_path))
     elif args.command == 'continue':
         draft_path = os.path.join(SETTINGS.PROJECT_PATH, '_drafts', args.draft_file)
         call(['open', draft_path])
@@ -319,6 +315,22 @@ date: {date}
     elif args.command == 'edit':
         post_path = os.path.join(SETTINGS.PROJECT_PATH, '_posts', args.post_file)
         call(['open', post_path])
+
+
+def main():
+    try:
+        parse_arguments()
+    except ConfigError, e:
+        print 'This seems your first time using this tool'
+        print 'Before playing the tool, there are some settings must be set'
+        print colored('[1] Your blog project full path:', 'magenta')
+        line = sys.stdin.readline().strip()
+        while not os.path.isdir(line):
+            print 'Please input a valid path:'
+            line = sys.stdin.readline().strip()
+
+        with open(BLOGGING_SETTINGS_FILE, 'w') as f:
+            f.write('project_path={0}\n'.format(line))
 
 
 if __name__ == '__main__':
