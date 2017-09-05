@@ -14,10 +14,23 @@ def find_default_shell():
     return os.path.basename(stdout.strip())
 
 
+def write_if_not_exist(path, line):
+    exist = False
+    with open(path, 'r') as f:
+        l = f.readline()
+        while l:
+            if l == line:
+                exist = True
+            l = f.readline()
+    if not exist:
+        with open(path, 'a') as f:
+            f.write(line)
+
+
 def enable_argcomplete():
     default_shell = find_default_shell()
-    with open(os.path.join(os.path.expanduser("~"), '.{0}rc'.format(default_shell)), 'a') as f:
-        f.write('\neval "$(register-python-argcomplete blogging)"\n')
+    write_if_not_exist(os.path.join(os.path.expanduser("~"), '.{0}rc'.format(default_shell)),
+                       '\neval "$(register-python-argcomplete blogging)"\n')
 
 
 class CustomInstallCommand(install):
