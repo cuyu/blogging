@@ -100,13 +100,15 @@ blogging set-project-path {YOUR_PROJECT_PATH}
 
 ### Compatibility
 
-For now, only support the following shell:
+The supportability of auto complete feature is depend on [argcomplete](https://github.com/kislyuk/argcomplete).
 
-- zsh
+### Known issue
+
+Auto complete feature is not work when inputs contain unicode. (See this [issue](https://github.com/kislyuk/argcomplete/issues/228) for details)
 
 ### TODO
 
-- Support more shell types
+- ~~Support more shell types~~
 - More flexible blog project structure (e.g. can customise the draft/publish folder name)
 - ~~An option to open and edit published blogs, also support add `-filter` option to filter by word, category, tags, etc.~~
 - ~~Add a gif screenshot to show this tool~~

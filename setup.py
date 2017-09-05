@@ -4,10 +4,19 @@ import setuptools
 from blogging.constants import __VERSION__
 from setuptools.command.install import install
 import os
+import subprocess
+
+
+def find_default_shell():
+    cmd = 'echo $SHELL'
+    proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+    stdout = proc.stdout.readline()
+    return os.path.basename(stdout.strip())
 
 
 def enable_argcomplete():
-    with open(os.path.join(os.path.expanduser("~"), '.zshrc'), 'a') as f:
+    default_shell = find_default_shell()
+    with open(os.path.join(os.path.expanduser("~"), '.{0}rc'.format(default_shell)), 'a') as f:
         f.write('\neval "$(register-python-argcomplete blogging)"\n')
 
 
