@@ -6,16 +6,13 @@ import os
 import datetime
 import re
 from subprocess import call
-from os.path import expanduser
 from tabulate import tabulate
 import codecs
 import argcomplete
 from Tkinter import Tk
 import time
 from termcolor import colored
-
-__VERSION__ = '0.1.6'
-BLOGGING_SETTINGS_FILE = os.path.join(expanduser("~"), '.blogging')
+from constants import __VERSION__, BLOGGING_SETTINGS_FILE
 
 
 def add_to_clipboard(text):
