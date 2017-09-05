@@ -16,7 +16,10 @@ from constants import __VERSION__, BLOGGING_SETTINGS_FILE
 
 
 def validate_settings():
-    return True if SETTINGS.PROJECT_PATH else False
+    if hasattr(SETTINGS, 'PROJECT_PATH') and hasattr(SETTINGS, 'DRAFTS_FOLDER') and hasattr(SETTINGS, 'POSTS_FOLDER'):
+        return True
+    else:
+        return False
 
 
 def add_to_clipboard(text):
@@ -311,6 +314,20 @@ date: {date}
         call(['open', post_path])
 
 
+def input_until_valid_path(validate_func, retry=3):
+    line = sys.stdin.readline().strip()
+    while not validate_func(line) and retry > 0:
+        print 'Please input a exist path:'
+        line = sys.stdin.readline().strip()
+        retry -= 1
+
+    if validate_func(line):
+        return line
+    else:
+        print colored('Path still not valid. Exiting...', 'red')
+        exit(1)
+
+
 def main():
     if validate_settings():
         parse_arguments()
@@ -318,19 +335,19 @@ def main():
         print 'This seems your first time using this tool'
         print 'Before playing the tool, there are some settings must be set'
         print colored('[1] Your blog project full path:', 'magenta')
-        line = sys.stdin.readline().strip()
-        retry = 3
-        while not os.path.isdir(line) and retry > 0:
-            print 'Please input a valid path:'
-            line = sys.stdin.readline().strip()
-            retry -= 1
+        project_path = input_until_valid_path(os.path.isdir)
 
-        if os.path.isdir(line):
-            with open(BLOGGING_SETTINGS_FILE, 'w') as f:
-                f.write('project_path={0}\n'.format(line))
-            print colored('Configration done. Enjoy the tool~', 'green')
-        else:
-            print colored('Path still not valid. Exiting...', 'red')
+        print colored('[2] Folder to put your drafts:', 'magenta')
+        drafts_folder = input_until_valid_path(lambda name: name and os.path.isdir(os.path.join(project_path, name)))
+
+        print colored('[3] Folder to put your published blogs:', 'magenta')
+        posts_folder = input_until_valid_path(lambda name: name and os.path.isdir(os.path.join(project_path, name)))
+
+        with open(BLOGGING_SETTINGS_FILE, 'w') as f:
+            f.write('project_path={0}\n'.format(project_path))
+            f.write('drafts_folder={0}\n'.format(drafts_folder))
+            f.write('posts_folder={0}\n'.format(posts_folder))
+        print colored('Configration done. Enjoy the tool~', 'green')
 
 
 if __name__ == '__main__':
