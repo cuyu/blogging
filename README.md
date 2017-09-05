@@ -82,11 +82,16 @@ YOUR_PROJECT_PATH
 │   ├── first_blog.md
 │   ├── second_blog.md
 │   └── third_blog.md
+├── _images
+│   ├── screenshot1.png
+│   └── screenshot2.png
 ├── index.html
 └── ...
 ```
 
 All markdown files under `_posts` folder will be compiled into html files and hosted on your site. 
+
+**The folder names above (e.g. `_posts`) can be configured when you use the tool for the first time*
 
 ### Settings
 
