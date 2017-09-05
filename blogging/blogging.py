@@ -16,7 +16,8 @@ from constants import __VERSION__, BLOGGING_SETTINGS_FILE
 
 
 def validate_settings():
-    if hasattr(SETTINGS, 'PROJECT_PATH') and hasattr(SETTINGS, 'DRAFTS_FOLDER') and hasattr(SETTINGS, 'POSTS_FOLDER'):
+    if hasattr(SETTINGS, 'PROJECT_PATH') and hasattr(SETTINGS, 'DRAFTS_FOLDER') and hasattr(SETTINGS, 'POSTS_FOLDER') \
+            and hasattr(SETTINGS, 'IMAGES_FOLDER'):
         return True
     else:
         return False
@@ -69,7 +70,7 @@ class Settings(object):
 SETTINGS = Settings(BLOGGING_SETTINGS_FILE)
 
 
-def _get_meta_info(path='_posts'):
+def _get_meta_info(path=SETTINGS.POSTS_FOLDER):
     info = dict()
     for file_name in os.listdir(os.path.join(SETTINGS.PROJECT_PATH, path)):
         if file_name.startswith('.'):
@@ -95,7 +96,7 @@ def _get_meta_info(path='_posts'):
     return info
 
 
-def _list_meta_info(path='_posts'):
+def _list_meta_info(path=SETTINGS.POSTS_FOLDER):
     result = dict()
     categories = dict()
     tags = dict()
@@ -224,18 +225,21 @@ def parse_arguments():
     continue_parser.add_argument('--filter', action='store', nargs=1,
                                  help='Filter posts by keywords in title/tag/category')
     continue_parser.add_argument('draft_file', help='File name of the draft').completer = FileCompleterWithFilter(
-        '_drafts')
+        SETTINGS.DRAFTS_FOLDER)
 
     publish_parser = subparsers.add_parser('publish', help='Publish the post to the Github')
-    publish_parser.add_argument('draft_file', help='File name of the draft').completer = FileCompleter('_drafts')
+    publish_parser.add_argument('draft_file', help='File name of the draft').completer = FileCompleter(
+        SETTINGS.DRAFTS_FOLDER)
 
     image_parser = subparsers.add_parser('image', help='Rename and save the image to the Github')
     image_parser.add_argument('image_path', help='Path of the image file')
-    image_parser.add_argument('draft_file', help='Title of the blog in draft').completer = FileCompleter('_drafts')
+    image_parser.add_argument('draft_file', help='Title of the blog in draft').completer = FileCompleter(
+        SETTINGS.DRAFTS_FOLDER)
 
     edit_parser = subparsers.add_parser('edit', help='Open one published post and edit')
     edit_parser.add_argument('--filter', action='store', nargs=1, help='Filter posts by keywords in title/tag/category')
-    edit_parser.add_argument('post_file', help='File name of the post').completer = FileCompleterWithFilter('_posts')
+    edit_parser.add_argument('post_file', help='File name of the post').completer = FileCompleterWithFilter(
+        SETTINGS.POSTS_FOLDER)
 
     argcomplete.autocomplete(parser, always_complete_options=False)
     args = parser.parse_args()
@@ -254,7 +258,7 @@ tags: {tags}
 date: {date}
 ---""".format(title=post_name, date=str(today), category=args.category, tags=post_tags)
 
-        draft_path = os.path.join(SETTINGS.PROJECT_PATH, '_drafts', '{0}'.format(file_name))
+        draft_path = os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.DRAFTS_FOLDER, '{0}'.format(file_name))
         with open(draft_path, 'w') as f:
             f.write(content)
         print "\"{0}\" has been created under _drafts folder.".format(file_name)
@@ -267,9 +271,9 @@ date: {date}
     elif args.command == 'publish':
         os.chdir(SETTINGS.PROJECT_PATH)
         # Rename the file name and the date in meta header then commit to Github
-        draft_path = os.path.join(SETTINGS.PROJECT_PATH, '_drafts', args.draft_file)
+        draft_path = os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.DRAFTS_FOLDER, args.draft_file)
         new_name = str(datetime.date.today()) + args.draft_file[10:]
-        post_path = os.path.join(SETTINGS.PROJECT_PATH, '_posts', new_name)
+        post_path = os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.POSTS_FOLDER, new_name)
         changed_date = False
         with open(post_path, 'w') as in_file:
             with open(draft_path, 'r') as out_file:
@@ -288,29 +292,29 @@ date: {date}
         call(['git', 'push'])
     elif args.command == 'save':
         os.chdir(SETTINGS.PROJECT_PATH)
-        all_drafts = os.path.join(SETTINGS.PROJECT_PATH, '_drafts', '*')
-        all_posts = os.path.join(SETTINGS.PROJECT_PATH, '_posts', '*')
+        all_drafts = os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.DRAFTS_FOLDER, '*')
+        all_posts = os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.POSTS_FOLDER, '*')
         call(['git', 'add', all_drafts])
         call(['git', 'add', all_posts])
         call(['git', 'commit', '-m', 'Save drafts and edited posts'])
         call(['git', 'push'])
     elif args.command == 'continue':
-        draft_path = os.path.join(SETTINGS.PROJECT_PATH, '_drafts', args.draft_file)
+        draft_path = os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.DRAFTS_FOLDER, args.draft_file)
         call(['open', draft_path])
     elif args.command == 'image':
         image_extension = args.image_path.split('.')[-1]
         image_name = args.draft_file.replace('.md', '') + '.' + image_extension
         index = 1
-        while os.path.isfile(os.path.join(SETTINGS.PROJECT_PATH, 'images', image_name)):
+        while os.path.isfile(os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.IMAGES_FOLDER, image_name)):
             image_name = args.draft_file.replace('.md', '') + '-{0}'.format(index) + '.' + image_extension
             index += 1
-        call(['mv', args.image_path, os.path.join(SETTINGS.PROJECT_PATH, 'images', image_name)])
+        call(['mv', args.image_path, os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.IMAGES_FOLDER, image_name)])
         os.chdir(SETTINGS.PROJECT_PATH)
-        call(['git', 'add', os.path.join(SETTINGS.PROJECT_PATH, 'images', image_name)])
-        print '/images/{0}'.format(image_name)
+        call(['git', 'add', os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.IMAGES_FOLDER, image_name)])
+        print '/{0}/{1}'.format(SETTINGS.IMAGES_FOLDER, image_name)
         # TODO: add image path to clipboard
     elif args.command == 'edit':
-        post_path = os.path.join(SETTINGS.PROJECT_PATH, '_posts', args.post_file)
+        post_path = os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.POSTS_FOLDER, args.post_file)
         call(['open', post_path])
 
 
@@ -343,10 +347,14 @@ def main():
         print colored('[3] Folder to put your published blogs:', 'magenta')
         posts_folder = input_until_valid_path(lambda name: name and os.path.isdir(os.path.join(project_path, name)))
 
+        print colored('[4] Folder to put images of your blog:', 'magenta')
+        images_folder = input_until_valid_path(lambda name: name and os.path.isdir(os.path.join(project_path, name)))
+
         with open(BLOGGING_SETTINGS_FILE, 'w') as f:
             f.write('project_path={0}\n'.format(project_path))
             f.write('drafts_folder={0}\n'.format(drafts_folder))
             f.write('posts_folder={0}\n'.format(posts_folder))
+            f.write('images_folder={0}\n'.format(images_folder))
         print colored('Configration done. Enjoy the tool~', 'green')
 
 
