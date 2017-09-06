@@ -66,10 +66,9 @@ def hacked_call(self, argument_parser, always_complete_options=True, exit_method
     comp_words = comp_words[start:]
 
     debug(
-        "\nLINE: '{l}'\nPREQUOTE: '{pq}'\nPREFIX: '{p}'".format(l=comp_line, pq=cword_prequote, p=cword_prefix).encode(
-            'utf-8'),
-        "\nSUFFIX: '{s}'".format(s=cword_suffix).encode('utf-8'),
-        "\nWORDS:", comp_words)
+        u"\nLINE: '{l}'\nPREQUOTE: '{pq}'\nPREFIX: '{p}'".format(l=comp_line, pq=cword_prequote, p=cword_prefix),
+        u"\nSUFFIX: '{s}'".format(s=cword_suffix),
+        u"\nWORDS:", comp_words)
 
     completions = self._get_completions(comp_words, cword_prefix, cword_prequote, last_wordbreak_pos)
 
