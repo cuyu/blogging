@@ -109,12 +109,12 @@ The supportability of auto complete feature is depend on [argcomplete](https://g
 
 ### Known issue
 
-Auto complete feature is not work when inputs contain unicode. (See this [issue](https://github.com/kislyuk/argcomplete/issues/228) for details)
+~~Auto complete feature is not work when inputs contain unicode. (See this [issue](https://github.com/kislyuk/argcomplete/issues/228) for details)~~ (Fixed with a monkey patch)
 
 ### TODO
 
 - ~~Support more shell types~~
-- More flexible blog project structure (e.g. can customise the draft/publish folder name)
+- ~~More flexible blog project structure (e.g. can customise the draft/publish folder name)~~
 - ~~An option to open and edit published blogs, also support add `-filter` option to filter by word, category, tags, etc.~~
 - ~~Add a gif screenshot to show this tool~~
 - Cache the blogs' meta info to improve performance (For now, I have near 80 blogs, performance is not the bottleneck)
