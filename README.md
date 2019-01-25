@@ -109,7 +109,16 @@ The supportability of auto complete feature is depend on [argcomplete](https://g
 
 ### Known issue
 
-~~Auto complete feature is not work when inputs contain unicode. (See this [issue](https://github.com/kislyuk/argcomplete/issues/228) for details)~~ (Fixed with a monkey patch)
+- ~~Auto complete feature is not work when inputs contain unicode. (See this [issue](https://github.com/kislyuk/argcomplete/issues/228) for details)~~ (Fixed with a monkey patch)
+
+- For zsh, it shows `command not found: complete`. To fix this, pls add following lines to your `~/.zshrc` file and source it:
+
+  ```
+  autoload bashcompinit
+  bashcompinit
+  ```
+
+
 
 ### TODO
 
