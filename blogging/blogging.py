@@ -137,7 +137,9 @@ class Settings(object):
 SETTINGS = Settings(BLOGGING_SETTINGS_FILE)
 
 
-def _get_meta_info(path=SETTINGS.POSTS_FOLDER):
+def _get_meta_info(path=None):
+    if path is None:
+        path = SETTINGS.POSTS_FOLDER
     info = dict()
     for file_name in os.listdir(os.path.join(SETTINGS.PROJECT_PATH, path)):
         if file_name.startswith('.'):
@@ -163,7 +165,9 @@ def _get_meta_info(path=SETTINGS.POSTS_FOLDER):
     return info
 
 
-def _list_meta_info(path=SETTINGS.POSTS_FOLDER):
+def _list_meta_info(path=None):
+    if path is None:
+        path = SETTINGS.POSTS_FOLDER
     result = dict()
     categories = dict()
     tags = dict()
