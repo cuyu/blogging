@@ -16,12 +16,15 @@ def find_default_shell():
 
 def write_if_not_exist(path, line):
     exist = False
-    with open(path, 'r') as f:
-        l = f.readline()
-        while l:
-            if l == line:
-                exist = True
+    try:
+        with open(path, 'r') as f:
             l = f.readline()
+            while l:
+                if l == line:
+                    exist = True
+                l = f.readline()
+    except Exception:
+        pass
     if not exist:
         with open(path, 'a') as f:
             f.write(line)
