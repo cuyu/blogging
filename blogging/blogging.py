@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# import argcomplete_patch
 import argparse
 import cgi
 import os
@@ -28,38 +27,38 @@ def get_image_size(file_path):
     """
     size = os.path.getsize(file_path)
 
-    with open(file_path) as input:
+    with open(file_path, 'rb') as input:
         height = -1
         width = -1
         data = input.read(25)
 
-        if (size >= 10) and data[:6] in ('GIF87a', 'GIF89a'):
+        if (size >= 10) and data[:6] in (b'GIF87a', b'GIF89a'):
             # GIFs
             w, h = struct.unpack("<HH", data[6:10])
             width = int(w)
             height = int(h)
-        elif ((size >= 24) and data.startswith('\211PNG\r\n\032\n')
-              and (data[12:16] == 'IHDR')):
+        elif ((size >= 24) and data.startswith(b'\211PNG\r\n\032\n')
+              and (data[12:16] == b'IHDR')):
             # PNGs
             w, h = struct.unpack(">LL", data[16:24])
             width = int(w)
             height = int(h)
-        elif (size >= 16) and data.startswith('\211PNG\r\n\032\n'):
+        elif (size >= 16) and data.startswith(b'\211PNG\r\n\032\n'):
             # older PNGs?
             w, h = struct.unpack(">LL", data[8:16])
             width = int(w)
             height = int(h)
-        elif (size >= 2) and data.startswith('\377\330'):
+        elif (size >= 2) and data.startswith(b'\377\330'):
             # JPEG
             msg = " raised while trying to decode as JPEG."
             input.seek(0)
             input.read(2)
             b = input.read(1)
             try:
-                while (b and ord(b) != 0xDA):
-                    while (ord(b) != 0xFF): b = input.read(1)
-                    while (ord(b) == 0xFF): b = input.read(1)
-                    if (ord(b) >= 0xC0 and ord(b) <= 0xC3):
+                while (b and b[0] != 0xDA):
+                    while (b[0] != 0xFF): b = input.read(1)
+                    while (b[0] == 0xFF): b = input.read(1)
+                    if (b[0] >= 0xC0 and b[0] <= 0xC3):
                         input.read(3)
                         h, w = struct.unpack(">HH", input.read(4))
                         break
@@ -91,8 +90,7 @@ def validate_settings():
 
 
 def add_to_clipboard(text):
-    from Tkinter import Tk
-    # this function seems not work for me?
+    from tkinter import Tk
     r = Tk()
     r.withdraw()
     r.clipboard_clear()
@@ -199,21 +197,21 @@ def _list_meta_info(path=None):
 def stats_categories():
     result = _list_meta_info()
     table = []
-    all_categories = result['category'].keys()
+    all_categories = list(result['category'].keys())
     all_categories.sort()
     for c in all_categories:
         table.append([c, result['category'][c]])
-    print tabulate(table, headers=['Category', 'Count'])
+    print(tabulate(table, headers=['Category', 'Count']))
 
 
 def stats_tags():
     result = _list_meta_info()
     table = []
-    all_tags = result['tag'].keys()
+    all_tags = list(result['tag'].keys())
     all_tags.sort()
     for c in all_tags:
         table.append([c, result['tag'][c]])
-    print tabulate(table, headers=['Tag', 'Count'])
+    print(tabulate(table, headers=['Tag', 'Count']))
 
 
 class FileCompleter(object):
@@ -223,7 +221,7 @@ class FileCompleter(object):
             file_names = os.listdir(os.path.join(SETTINGS.PROJECT_PATH, path))
         else:
             file_names = []
-        self.choices = [name.decode('utf-8') for name in file_names if not name.startswith('.')]
+        self.choices = [name for name in file_names if not name.startswith('.')]
 
     def __call__(self, prefix, parsed_args, **kwargs):
         return (c for c in self.choices if c.startswith(prefix))
@@ -250,22 +248,19 @@ class FileCompleterWithFilter(FileCompleter):
             if (meta_data.get('category') and keyword_lower == meta_data.get('category').lower()) \
                     or keyword_lower in meta_data['title'].lower() \
                     or (meta_data.get('tag') and keyword_lower in [tag.lower() for tag in meta_data.get('tag')]):
-                results.append(filename.decode('utf-8'))
+                results.append(filename)
         return results
 
 
 def CategoryCompleter(prefix, **kwargs):
-    # FIXME: there is a bug (of argcomplete) that when `blogging new '的' `, then tab is not work as expect, the reason should be the unicode in cmd
     result = _list_meta_info()
-    all_categories = result['category'].keys()
+    all_categories = list(result['category'].keys())
     return (c for c in all_categories if c.startswith(prefix))
 
 
 def TagCompleter(prefix, **kwargs):
     result = _list_meta_info()
-    # Sorting is not work as it is controlled by the bash side
-    # See https://github.com/kislyuk/argcomplete/issues/129 for details
-    all_tags = result['tag'].keys()
+    all_tags = list(result['tag'].keys())
     return (c for c in all_tags if c.startswith(prefix))
 
 
@@ -332,7 +327,7 @@ date: {date}
         draft_path = os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.DRAFTS_FOLDER, '{0}'.format(file_name))
         with open(draft_path, 'w') as f:
             f.write(content)
-        print "\"{0}\" has been created under _drafts folder.".format(file_name)
+        print("\"{0}\" has been created under _drafts folder.".format(file_name))
         call(['open', draft_path])
     elif args.command == 'ls':
         if args.list_content == 'categories':
@@ -383,9 +378,9 @@ date: {date}
         call(['mv', args.image_path, os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.IMAGES_FOLDER, image_name)])
         os.chdir(SETTINGS.PROJECT_PATH)
         call(['git', 'add', os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.IMAGES_FOLDER, image_name)])
-        print '<img title="{0}" src="/{1}/{2}" width="{3}" />'.format(image_name, SETTINGS.IMAGES_FOLDER, image_name,
-                                                                      image_width)
-        print '<span class="caption">REPLACEME</span>'
+        print('<img title="{0}" src="/{1}/{2}" width="{3}" />'.format(image_name, SETTINGS.IMAGES_FOLDER, image_name,
+                                                                      image_width))
+        print('<span class="caption">REPLACEME</span>')
         # TODO: add image path to clipboard
     elif args.command == 'edit':
         post_path = os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.POSTS_FOLDER, args.post_file)
@@ -395,14 +390,14 @@ date: {date}
 def input_until_valid_path(validate_func, retry=3):
     line = sys.stdin.readline().strip()
     while not validate_func(line) and retry > 0:
-        print 'Please input a exist path:'
+        print('Please input a exist path:')
         line = sys.stdin.readline().strip()
         retry -= 1
 
     if validate_func(line):
         return line
     else:
-        print colored('Path still not valid. Exiting...', 'red')
+        print(colored('Path still not valid. Exiting...', 'red'))
         exit(1)
 
 
@@ -410,18 +405,18 @@ def main():
     if validate_settings():
         parse_arguments()
     else:
-        print 'This seems your first time using this tool'
-        print 'Before playing the tool, there are some settings must be set'
-        print colored('[1] Your blog project full path:', 'magenta')
+        print('This seems your first time using this tool')
+        print('Before playing the tool, there are some settings must be set')
+        print(colored('[1] Your blog project full path:', 'magenta'))
         project_path = input_until_valid_path(os.path.isdir)
 
-        print colored('[2] Folder to put your drafts:', 'magenta')
+        print(colored('[2] Folder to put your drafts:', 'magenta'))
         drafts_folder = input_until_valid_path(lambda name: name and os.path.isdir(os.path.join(project_path, name)))
 
-        print colored('[3] Folder to put your published blogs:', 'magenta')
+        print(colored('[3] Folder to put your published blogs:', 'magenta'))
         posts_folder = input_until_valid_path(lambda name: name and os.path.isdir(os.path.join(project_path, name)))
 
-        print colored('[4] Folder to put images of your blog:', 'magenta')
+        print(colored('[4] Folder to put images of your blog:', 'magenta'))
         images_folder = input_until_valid_path(lambda name: name and os.path.isdir(os.path.join(project_path, name)))
 
         with open(BLOGGING_SETTINGS_FILE, 'w') as f:
@@ -429,7 +424,7 @@ def main():
             f.write('drafts_folder={0}\n'.format(drafts_folder))
             f.write('posts_folder={0}\n'.format(posts_folder))
             f.write('images_folder={0}\n'.format(images_folder))
-        print colored('Configration done. Enjoy the tool~', 'green')
+        print(colored('Configration done. Enjoy the tool~', 'green'))
 
 
 if __name__ == '__main__':

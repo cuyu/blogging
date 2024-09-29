@@ -48,6 +48,7 @@ setuptools.setup(
     name='github-blogging',
     version=__VERSION__,
     description='A cmdline tool to help managing your blogs',
+    readme = "README.md",
     packages=['blogging'],
     author='Curtis Yu',
     author_email='icyarm@icloud.com',
@@ -64,7 +65,7 @@ setuptools.setup(
     },
     license='MIT',
     classifiers=[
-        'Programming Language :: Python :: 2'
+        'Programming Language :: Python :: 3'
     ],
     cmdclass={
         'install': CustomInstallCommand,

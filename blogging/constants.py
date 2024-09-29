@@ -3,5 +3,5 @@
 
 import os
 
-__VERSION__ = '1.0.1'
+__VERSION__ = '2.0.0'
 BLOGGING_SETTINGS_FILE = os.path.join(os.path.expanduser("~"), '.blogging')
