@@ -12,7 +12,7 @@ import codecs
 import argcomplete
 import time
 from termcolor import colored
-from constants import __VERSION__, BLOGGING_SETTINGS_FILE
+from blogging.constants import __VERSION__, BLOGGING_SETTINGS_FILE
 import struct
 
 

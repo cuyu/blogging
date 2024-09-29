@@ -6,6 +6,29 @@
 
 This cmdline tool was initially created to help managing [my own blog](http://cuyu.github.io) and it really saves my time. So I'd like to abstract the tool (suit for more scenario) here to benefit you!
 
+### Installation & Setup
+
+```bash
+pip3 install github-blogging
+```
+
+Enable the auto-complete feature:
+
+```bash
+echo 'eval "$(register-python-argcomplete blogging)"' >> ~/.zshrc
+```
+
+#### Initial setup
+
+For the first time you use the tool, you **must** do some settings (e.g. set the blog project root path). To get settings done, just type:
+
+```
+blogging
+```
+
+*Or you can manaully create and edit the `~/.blogging` file.*
+
+
 ### How this tool can help you
 
 #### Scenario 1
@@ -92,16 +115,6 @@ YOUR_PROJECT_PATH
 All markdown files under `_posts` folder will be compiled into html files and hosted on your site. 
 
 **The folder names above (e.g. `_posts`) can be configured when you use the tool for the first time*
-
-### Settings
-
-For the first time you use the tool, you **must** do some settings (e.g. set the blog project root path). To get settings done, just type:
-
-```
-blogging
-```
-
-*Or you can manaully create and edit the `~/.blogging` file.*
 
 ### Compatibility
 
