@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import argparse
-import cgi
+import html
 import os
 import datetime
 import re
@@ -119,7 +119,7 @@ def get_valid_title(s):
     Escape characters when used as html parsing.
     E.g. `<` to `&lt;`
     """
-    return cgi.escape(s)
+    return html.escape(s)
 
 
 class Settings(object):
