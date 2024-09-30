@@ -20,6 +20,11 @@ class UnknownImageFormat(Exception):
     pass
 
 
+def copy2clip(txt):
+    cmd = f"echo '{txt.strip()}'|pbcopy"
+    return call(cmd, shell=True)
+
+
 def get_image_size(file_path):
     """
     Return (width, height) for a given img file content - no external
@@ -371,6 +376,8 @@ date: {date}
         image_extension = args.image_path.split('.')[-1]
         image_name = args.draft_file.replace('.md', '') + '.' + image_extension
         image_width, image_height = get_image_size(args.image_path)
+        image_url = SETTINGS.IMAGES_FOLDER.replace(SETTINGS.PROJECT_PATH, '') + '/' + image_name
+        image_url = image_url if image_url.startswith('/') else '/' + image_url
         index = 1
         while os.path.isfile(os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.IMAGES_FOLDER, image_name)):
             image_name = args.draft_file.replace('.md', '') + '-{0}'.format(index) + '.' + image_extension
@@ -378,10 +385,13 @@ date: {date}
         call(['cp', args.image_path, os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.IMAGES_FOLDER, image_name)])
         os.chdir(SETTINGS.PROJECT_PATH)
         call(['git', 'add', os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.IMAGES_FOLDER, image_name)])
-        print('<img title="{0}" src="/{1}/{2}" width="{3}" />'.format(image_name, SETTINGS.IMAGES_FOLDER, image_name,
-                                                                      image_width))
-        print('<span class="caption">REPLACEME</span>')
-        # TODO: add image path to clipboard
+        image_tag = '''<img title="{0}" src="{1}" width="{2}" />
+<span class="caption">REPLACEME</span>'''.format(
+            image_name, image_url, image_width)
+        print(image_tag)
+        print('Above image tags has been copied to clipboard.')
+        # Add to clipboard
+        copy2clip(image_tag)
     elif args.command == 'edit':
         post_path = os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.POSTS_FOLDER, args.post_file)
         call(['open', post_path])

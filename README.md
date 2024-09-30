@@ -90,6 +90,8 @@ Sometimes, you may need to insert images into the blog. This tool can help you t
 blogging image {image_local_path} {file_name}
 ```
 
+This command will generate the markdown image tag and add to your clipboard. You can paste it to the markdown file directly.
+
 ***Super easy, right?***
 
 All you need to do is open your terminal and execute:
