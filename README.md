@@ -5,6 +5,7 @@
 ![screencast](/screencast.gif)
 
 This cmdline tool was initially created to help managing [my own blog](http://cuyu.github.io), and it really saves my time. So I'd like to abstract the tool (suit for more scenario) here to benefit you!
+***Note**: the tool is only tested on macOS, but it should work on Linux as well.*
 
 ### Installation & Setup
 

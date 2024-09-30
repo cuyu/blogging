@@ -375,7 +375,7 @@ date: {date}
         while os.path.isfile(os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.IMAGES_FOLDER, image_name)):
             image_name = args.draft_file.replace('.md', '') + '-{0}'.format(index) + '.' + image_extension
             index += 1
-        call(['mv', args.image_path, os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.IMAGES_FOLDER, image_name)])
+        call(['cp', args.image_path, os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.IMAGES_FOLDER, image_name)])
         os.chdir(SETTINGS.PROJECT_PATH)
         call(['git', 'add', os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.IMAGES_FOLDER, image_name)])
         print('<img title="{0}" src="/{1}/{2}" width="{3}" />'.format(image_name, SETTINGS.IMAGES_FOLDER, image_name,
