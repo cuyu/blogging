@@ -376,12 +376,12 @@ date: {date}
         image_extension = args.image_path.split('.')[-1]
         image_name = args.draft_file.replace('.md', '') + '.' + image_extension
         image_width, image_height = get_image_size(args.image_path)
-        image_url = SETTINGS.IMAGES_FOLDER.replace(SETTINGS.PROJECT_PATH, '') + '/' + image_name
-        image_url = image_url if image_url.startswith('/') else '/' + image_url
         index = 1
         while os.path.isfile(os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.IMAGES_FOLDER, image_name)):
             image_name = args.draft_file.replace('.md', '') + '-{0}'.format(index) + '.' + image_extension
             index += 1
+        image_url = SETTINGS.IMAGES_FOLDER.replace(SETTINGS.PROJECT_PATH, '') + '/' + image_name
+        image_url = image_url if image_url.startswith('/') else '/' + image_url
         call(['cp', args.image_path, os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.IMAGES_FOLDER, image_name)])
         os.chdir(SETTINGS.PROJECT_PATH)
         call(['git', 'add', os.path.join(SETTINGS.PROJECT_PATH, SETTINGS.IMAGES_FOLDER, image_name)])
