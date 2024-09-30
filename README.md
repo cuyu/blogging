@@ -89,7 +89,7 @@ Sometimes, you may need to insert images into the blog. This tool can help you t
 blogging image {image_local_path} {file_name}
 ```
 
-**Super easy, right?**
+***Super easy, right?***
 
 All you need to do is open your terminal and execute:
 
