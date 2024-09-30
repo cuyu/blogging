@@ -1,10 +1,10 @@
 ## 🖊blogging
 
-> A smart tool to help you managing blogs
+> A smart tool to help you to manage blogs
 
 ![screencast](/screencast.gif)
 
-This cmdline tool was initially created to help managing [my own blog](http://cuyu.github.io) and it really saves my time. So I'd like to abstract the tool (suit for more scenario) here to benefit you!
+This cmdline tool was initially created to help managing [my own blog](http://cuyu.github.io), and it really saves my time. So I'd like to abstract the tool (suit for more scenario) here to benefit you!
 
 ### Installation & Setup
 
@@ -26,66 +26,74 @@ For the first time you use the tool, you **must** do some settings (e.g. set the
 blogging
 ```
 
-*Or you can manaully create and edit the `~/.blogging` file.*
+*Or you can manually create and edit the `~/.blogging` file.*
 
 
 ### How this tool can help you
 
-#### Scenario 1
+#### Create a new blog
 
 Assume you just get a good idea and want to write it down to the disk. So you will create a file and name it, and write some metadata like categories and tags at first.
 
-With this tool, you just need to type one command and it will do all the things above (it even opens the file automatically for you):
+With this tool, you just need to type one command, and it will do all the things above (it even opens the file automatically for you):
 
-```
+```sh
 blogging new {title} {category} {tag1} {tag2}
 ```
 
-#### Scenario 2
+#### Save drafts to cloud
 
-The writing work is almost done, but you have something more urgent to handle. You feel not very safe to only save the file on the disk. So here, a single command will save all the drafts to the cloud (Github):
+The writing work is almost done, but you have something more urgent to handle. You feel not very safe to only save the file on the disk. So here, a single command will save all the drafts to the cloud (GitHub):
 
-```
+```sh
 blogging save
 ```
 
-#### Scenario 3
+#### Continue the writes
 
-The urgent work is done and you'd like to continue the writes just saved.
+The urgent work is done, and you'd like to continue the writes just saved.
 
 This tool gives you the convenience (just press `tab`, and pick from all the drafts) to open the draft:
 
-```
+```sh
 blogging continue {file_name}
 ```
 
-#### Scenario 4
+#### Publish the blog
 
-The writes is done. You'd like to publish the blog to the web. To achieve this, you may need to move the file from draft folder to the publish folder and push the changes to the server side.
+The writes is done. You'd like to publish the blog to the web. To achieve this, you may need to move the file from the drafts folder to the publish folder and push the changes to the server side.
 
 With `blogging`:
 
-```
+```sh
 blogging publish {file_name}
 ```
 
-#### Scenario 5
+#### Edit the published blog
 
-The blog is published and you'd like to edit the published blog again. However you cannot remeber the exact title of the blog. 
+The blog is published, and you'd like to edit the published blog again. However, you cannot remember the exact title of the blog. 
 
 With `blogging`, you can open the published blog conveniently with `--filter` option. This option will search the title/category/tags of all published  blogs, and pop up (need to press `space` and  `tab`  after the keyword) candidate blogs in the terminal.
 
-```
+```sh
 blogging edit --filter {keyword} {file_name}
 ```
 
-The `--filter` is optional and is case insensesitve (i.e. 'Abc' works the same as 'abc').
+The `--filter` is optional and is case-insensitive (i.e. 'Abc' works the same as 'abc').
+
+#### Insert images
+
+Sometimes, you may need to insert images into the blog. This tool can help you to insert images into the markdown file with correct url path and also move the images to the blog git repo (which can be uploaded to GitHub later when publishing).
+
+```sh
+blogging image {image_local_path} {file_name}
+```
 
 **Super easy, right?**
 
 All you need to do is open your terminal and execute:
 
-```
+```sh
 pip install github-blogging
 ```
 
